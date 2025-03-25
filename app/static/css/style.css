@@ -1,0 +1,96 @@
+.nav-link.active {
+    font-weight: bold;
+    color: white !important;
+  }
+
+/* Full-width banner container */
+.banner-container {
+    position: relative;
+    width: 100%;
+    height: 800px;
+    overflow: hidden;
+}
+
+/* Banner Image */
+#banner {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Text Over Banner */
+.banner-text {
+    position: absolute;
+    top: 85%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    text-align: center;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+}
+
+/* Scroll Down Icon */
+.scroll-down {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    color: white;
+}
+
+.scroll-down a i {
+    color: whitesmoke; /* Change this to any color you like */
+    font-size: 2rem;
+    transition: color 0.3s ease;
+}
+
+.scroll-down a:hover i {
+    color: black; /* Optional: hover color */
+}
+
+/* Mission Section */
+.mission-section {
+    width: 100%;
+    padding: 80px 0;
+    /* background-color: var(--secondary-bg-color); */
+    box-sizing: border-box;
+    font-weight: 300;
+    font-size: 20px;
+}
+
+
+.mission-section h2 {
+    margin-bottom: 40px; /* Adjust the value as needed */
+}
+
+/* How It Works Section */
+
+.how-it-works-section .card {
+    height: 100%;
+    transition: transform 0.2s;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.how-it-works-section h2 {
+    margin-bottom: 40px; /* Adjust the value as needed */
+}
+.how-it-works-section .card:hover {
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+transform: translateY(-5px);
+}
+.how-it-works-section .icon img {
+height: 70px;
+margin-bottom: 20px;
+/* transition: transform 0.3s ease-in-out; */
+}
+.how-it-works-section .card:hover .icon img {
+transform: rotate(360deg);
+}
+.how-it-works-section .card-body {
+display: flex;
+flex-direction: column;
+justify-content: center;
+}

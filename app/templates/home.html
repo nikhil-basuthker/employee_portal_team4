@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Employability Portal: AWS Job Trends & Insights{% endblock %}
+
+{% block content %}
+<div class="banner-container">
+    <img id="banner" src="{{ url_for('static', filename='images/background.png') }}" alt="Banner Image">
+    <div class="banner-text">
+        <h1 class="display-4">AWS JobLens</h1>
+        <p class="lead">Explore AWS Job Trends, Skills, and Salary Insights</p>
+    </div>
+    <div class="scroll-down">
+        <a href="#how-it-works">
+            <i class="fas fa-angle-down"></i>
+        </a>
+    </div>
+</div>
+
+<div class="bg-light py-3">
+    <div class="mission-section">
+        <div class="container">
+            <h2 class="text-center">Our Mission</h2>
+            <p>This AWS JobLens Platform is designed to help students and professionals understand the AWS job landscape through data-driven insights. Our mission is to provide a centralized, intelligent dashboard for job trends, in-demand skills, and career recommendations based on real-time market data.</p>
+            <p>Please contact us for feedback or suggestions at <a href="mailto:team@aws-portal.edu">team@aws-portal.edu</a>.</p>
+            <p>If you encounter any issues, use our <a href="#">Bug Report</a> page to let us know.</p>
+        </div>
+    </div>
+</div>
+
+<div id="how-it-works" class="container how-it-works-section my-5">
+    <h2 class="text-center">How It Works</h2>
+    <div class="row">
+        <div class="col-md-3 d-flex">
+            <div class="card p-3 flex-fill">
+                <div class="card-body text-center">
+                    <div class="icon mb-3">
+                        <i class="bi bi-door-open" style="font-size: 60px;"></i>
+                    </div>
+                    <h3>Login</h3>
+                    <p class="text-left">Sign up as a new user, or log in to access job trend dashboards and insights tailored to AWS careers.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 d-flex">
+            <div class="card p-3 flex-fill">
+                <div class="card-body text-center">
+                    <div class="icon mb-3">
+                        <i class="fas fa-chart-line fa-3x"></i>
+                    </div>
+                    <h3>Analyze</h3>
+                    <p class="text-left">View job market insights, skill gaps, and salary predictions powered by predictive analytics and real-time data.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 d-flex">
+            <div class="card p-3 flex-fill">
+                <div class="card-body text-center">
+                    <div class="icon mb-3">
+                        <img src="{{ url_for('static', filename='images/resultslogo.png') }}" alt="Get Results" class="img-fluid">
+                    </div>
+                    <h3>Get Results</h3>
+                    <p class="text-left">Download reports or get redirected to job listings that match your AWS skill profile and preferences.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
