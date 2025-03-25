@@ -1,5 +1,5 @@
 .nav-link.active {
-    font-weight: bold;
+    font-weight: 400;
     color: white !important;
   }
 
@@ -56,12 +56,14 @@
     /* background-color: var(--secondary-bg-color); */
     box-sizing: border-box;
     font-weight: 300;
-    font-size: 20px;
+    font-size: 1.5rem;
 }
 
 
 .mission-section h2 {
     margin-bottom: 40px; /* Adjust the value as needed */
+    font-weight: 300;
+    font-size: 2rem;
 }
 
 /* How It Works Section */
@@ -76,19 +78,21 @@
 
 .how-it-works-section h2 {
     margin-bottom: 40px; /* Adjust the value as needed */
+    font-weight: 300;
+    font-size: 2rem;
 }
 .how-it-works-section .card:hover {
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
 }
+
 .how-it-works-section .icon img {
-height: 70px;
-margin-bottom: 20px;
+    height: 70px;
+    margin-bottom: 20px;
 /* transition: transform 0.3s ease-in-out; */
 }
-.how-it-works-section .card:hover .icon img {
-transform: rotate(360deg);
-}
+
+
 .how-it-works-section .card-body {
 display: flex;
 flex-direction: column;
