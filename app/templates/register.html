@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Register - AWS JobLens{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow p-4 border-0 rounded">
+                <h2 class="text-center mb-4">AWS JobLens: Register</h2>
+
+                <form method="POST">
+                    <div class="form-group mb-3">
+                        <label for="first_name">First Name</label>
+                        <input type="text" class="form-control" name="first_name" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="last_name">Last Name</label>
+                        <input type="text" class="form-control" name="last_name" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" name="username" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label for="confirm_password">Confirm Password</label>
+                        <input type="password" class="form-control" name="confirm_password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block w-100">Register</button>
+                </form>
+
+                <p class="text-center mt-3">
+                    Already have an account?
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

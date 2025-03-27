@@ -56,14 +56,14 @@
     /* background-color: var(--secondary-bg-color); */
     box-sizing: border-box;
     font-weight: 300;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
 }
 
 
 .mission-section h2 {
     margin-bottom: 40px; /* Adjust the value as needed */
     font-weight: 300;
-    font-size: 2rem;
+    font-size: 2.5rem;
 }
 
 /* How It Works Section */
@@ -79,8 +79,9 @@
 .how-it-works-section h2 {
     margin-bottom: 40px; /* Adjust the value as needed */
     font-weight: 300;
-    font-size: 2rem;
+    font-size: 2.5rem;
 }
+
 .how-it-works-section .card:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transform: translateY(-5px);
@@ -92,9 +93,26 @@
 /* transition: transform 0.3s ease-in-out; */
 }
 
+.how-it-works-section h3 {
+    /* margin-bottom: 40px; Adjust the value as needed */
+    font-weight: 300;
+    font-size: 1.4rem;
+}
 
 .how-it-works-section .card-body {
-display: flex;
-flex-direction: column;
-justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    font-weight: 300;
+    font-size: 1.3rem;
+}
+
+.reigster-page .card {
+    border-radius: 12px;
+}
+
+.reigster-page input.form-control {
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
 }
