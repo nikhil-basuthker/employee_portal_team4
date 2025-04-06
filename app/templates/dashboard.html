@@ -12,91 +12,121 @@
         <p>Explore insights from AWS-related job descriptions to identify popular skills and technologies.</p>
     </div>
 
-    <!-- Keyword Analysis Chart -->
-    <div class="col-md-12 mb-4">
-        <div class="card shadow-sm p-4">
-            <h3 class="section-title">Keyword Frequency Analysis</h3>
-            <p class="section-description">This graph displays the most frequently mentioned keywords extracted from various AWS-related job descriptions. 
-            Understanding these keywords helps identify in-demand skills and technologies, guiding users towards enhancing their profiles for better job recommendations.</p>
-            <div id="keywordChart"></div>
+    <!-- Graphs Row -->
+    <div class="row">
+        <!-- Keyword Analysis Chart -->
+        <div class="col-md-6 mb-4">
+            <div class="graph-card">
+                <h3 class="graph-title text-center">Keyword Frequency Analysis</h3>
+                <p class="graph-description">Shows most frequently mentioned keywords from AWS job descriptions.</p>
+                <div id="keywordChart" class="plotly-graph"></div>
+            </div>
         </div>
-    </div>
-    
-    <!-- Job Title Distribution Graph -->
-    <div class="col-md-12 mb-4">
-        <div class="card shadow-sm p-4">
-            <h3 class="section-title">Job Title Distribution</h3>
-            <p class="section-description">This bar chart shows the distribution of various job titles from the dataset, helping to identify the most common job roles in AWS-related job descriptions.</p>
-            <div id="jobTitleChart"></div>
+
+        <!-- Job Title Distribution Graph -->
+        <div class="col-md-6 mb-4">
+            <div class="graph-card">
+                <h3 class="graph-title text-center">Job Title Distribution</h3>
+                <p class="graph-description">Shows the distribution of various job titles from the dataset.</p>
+                <div id="jobTitleChart" class="plotly-graph"></div>
+            </div>
+        </div>
+
+        <!-- Employment Type Distribution -->
+        <div class="col-md-6 mb-4">
+            <div class="graph-card">
+                <h3 class="graph-title text-center">Employment Type Distribution</h3>
+                <p class="graph-description">Shows the distribution of job types (Full-time, Part-time, Contract).</p>
+                <div id="employmentTypeChart" class="plotly-graph"></div>
+            </div>
+        </div>
+
+        <!-- Experience Level Analysis -->
+        <div class="col-md-6 mb-4">
+            <div class="graph-card">
+                <h3 class="graph-title text-center">Experience Level Analysis</h3>
+                <p class="graph-description">Shows the distribution of required experience levels for jobs.</p>
+                <div id="experienceLevelChart" class="plotly-graph"></div>
+            </div>
         </div>
     </div>
 </div>
-
 
 <!-- Plotly.js for Graphs -->
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('✅ Dashboard Page Loaded');  // Debug Log
+        console.log('✅ Dashboard Page Loaded');
 
-        // Fetch keyword data from Flask API
+        const layoutSettings = {
+            margin: { t: 40, b: 50, l: 50, r: 50 },
+            responsive: true,
+            autosize: true,
+            height: 350  // Consistent height for all graphs
+        };
+
+        // Fetch keyword data
         fetch('/api/keywords')
             .then(response => response.json())
             .then(data => {
-                console.log('✅ API Response Received:', data); // Debug Log
-
                 var keywordChartData = [{
                     x: data.labels,
                     y: data.values,
                     type: 'bar',
-                    marker: { color: 'teal' },
-                    name: 'Keyword Frequency' // Adding legend name
+                    marker: { color: 'teal' }
                 }];
-                
-                var layout = {
-                    title: 'Top Keywords Extracted from AWS Job Descriptions',
-                    xaxis: { title: 'Keywords' },
-                    yaxis: { title: 'Frequency' },
-                    margin: { t: 80 },
-                    legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2 } // Positioning the legend below the graph
-                };
 
+                var layout = { ...layoutSettings, xaxis: { title: 'Keywords', automargin: true }, yaxis: { title: 'Frequency', automargin: true } };
                 Plotly.newPlot('keywordChart', keywordChartData, layout);
-                console.log('✅ Graph Rendered Successfully'); // Debug Log
             })
-            .catch(error => console.error('❌ Error fetching data:', error));
-            // Fetch job title data from Flask API
+            .catch(error => console.error('❌ Error fetching keyword data:', error));
+
+        // Fetch job title data
         fetch('/api/job_titles')
             .then(response => response.json())
             .then(data => {
-                if (data.labels.length === 0) {
-                    console.error('❌ No data returned for job title distribution.');
-                    return;
-                }
-                
-                console.log('✅ Job Title API Response Received:', data); // Debug Log
-
                 var jobTitleChartData = [{
                     x: data.labels,
                     y: data.values,
                     type: 'bar',
-                    orientation: 'v',
-                    marker: { color: 'skyblue' },
-                    name: 'Job Title Frequency'
+                    marker: { color: 'skyblue' }
                 }];
-                
-                var layout2 = {
-                    title: 'AWS Job Title Distribution',
-                    xaxis: { title: 'Job Titles', tickangle: 45, automargin: true },
-                    yaxis: { title: 'Count' },
-                    height: 800,
-                    margin: { t: 80, b: 150 }
-                };
 
+                var layout2 = { ...layoutSettings, xaxis: { title: 'Job Titles', tickangle: 45, automargin: true }, yaxis: { title: 'Count', automargin: true } };
                 Plotly.newPlot('jobTitleChart', jobTitleChartData, layout2);
-                console.log('✅ Job Title Graph Rendered Successfully');
             })
             .catch(error => console.error('❌ Error fetching job title data:', error));
+
+        // Fetch employment type data
+        fetch('/api/employment_type')
+            .then(response => response.json())
+            .then(data => {
+                var employmentTypeChartData = [{
+                    x: data.labels,
+                    y: data.values,
+                    type: 'bar',
+                    marker: { color: 'coral' }
+                }];
+
+                var layout3 = { ...layoutSettings, xaxis: { title: 'Employment Types', automargin: true }, yaxis: { title: 'Count', automargin: true } };
+                Plotly.newPlot('employmentTypeChart', employmentTypeChartData, layout3);
+            })
+            .catch(error => console.error('❌ Error fetching employment type data:', error));
+
+        // Fetch experience level data
+        fetch('/api/experience_level')
+            .then(response => response.json())
+            .then(data => {
+                var experienceLevelChartData = [{
+                    labels: data.labels,
+                    values: data.values,
+                    type: 'pie'
+                }];
+
+                var layout4 = { ...layoutSettings, height: 350 };
+                Plotly.newPlot('experienceLevelChart', experienceLevelChartData, layout4);
+            })
+            .catch(error => console.error('❌ Error fetching experience level data:', error));
     });
 </script>
 {% endblock %}

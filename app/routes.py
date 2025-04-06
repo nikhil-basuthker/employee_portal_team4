@@ -123,6 +123,54 @@ def get_job_titles():
     print("✅ Job title data fetched successfully:", data)  # Debug log
     return jsonify(data)
 
+from collections import Counter
+
+# Employment Type Distribution API
+@main.route('/api/employment_type')
+def get_employment_type_distribution():
+    job_data = list(db.jobs.find({}, {"employment_type": 1, "_id": 0}))
+
+    if not job_data:
+        print("❌ No employment type data found in the database.")
+        return jsonify({"labels": [], "values": []})
+
+    employment_types = [job.get('employment_type', 'Unknown') for job in job_data]
+
+    if len(employment_types) == 0:
+        return jsonify({"labels": [], "values": []})
+
+    employment_type_counts = pd.Series(employment_types).value_counts()
+    data = {
+        "labels": employment_type_counts.index.tolist(),
+        "values": employment_type_counts.values.tolist()
+    }
+
+    print("✅ Employment type data fetched successfully:", data)
+    return jsonify(data)
+
+
+# Experience Level Analysis API
+@main.route('/api/experience_level')
+def get_experience_level_distribution():
+    job_data = list(db.jobs.find({}, {"experience_level": 1, "_id": 0}))
+
+    if not job_data:
+        print("❌ No experience level data found in the database.")
+        return jsonify({"labels": [], "values": []})
+
+    experience_levels = [job.get('experience_level', 'Unknown') for job in job_data]
+
+    if len(experience_levels) == 0:
+        return jsonify({"labels": [], "values": []})
+
+    experience_level_counts = pd.Series(experience_levels).value_counts()
+    data = {
+        "labels": experience_level_counts.index.tolist(),
+        "values": experience_level_counts.values.tolist()
+    }
+
+    print("✅ Experience level data fetched successfully:", data)
+    return jsonify(data)
 
 
 # Dashboard Route

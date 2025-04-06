@@ -117,3 +117,61 @@
     font-size: 1rem;
 }
 
+
+/* Page Title */
+.dashboard-pg h1 {
+    font-weight: 300;
+    font-size: 2.5rem;
+    color: #2C3E50;
+    margin-bottom: 20px;
+}
+
+.dashboard-pg p {
+    color: #7F8C8D;
+    font-weight: 300;
+    font-size: 1.1rem;
+}
+
+/* Card Styling */
+.dashboard-pg .graph-card {
+    border-radius: 12px;
+    background-color: whitesmoke;
+    border: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+    height: 500px; /* Fixed height for all cards */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Allows content to fit properly */
+    overflow: hidden; /* Prevents scrollbars */
+}
+
+.dashboard-pg .graph-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Graph Title Styling */
+.dashboard-pg .graph-title {
+    font-weight: 300;
+    font-size: 1.4rem;
+    color: #2C3E50;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Graph Description Styling */
+.dashboard-pg .graph-description {
+    color: #7F8C8D;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Graph Styling */
+.plotly-graph {
+    height: 400px; /* Makes sure the graph fits within the card */
+    width: 100%;
+    margin-top: 10px;
+}
