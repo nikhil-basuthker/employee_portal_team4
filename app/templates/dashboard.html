@@ -49,6 +49,23 @@
                 <div id="experienceLevelChart" class="plotly-graph"></div>
             </div>
         </div>
+        <!-- Location Analysis -->
+        <div class="col-md-6 mb-4">
+            <div class="graph-card">
+                <h3 class="graph-title text-center">Location Analysis</h3>
+                <p class="graph-description">Shows the distribution of job postings by location.</p>
+                <div id="locationChart" class="plotly-graph"></div>
+            </div>
+        </div>
+
+        <!-- Salary Range Analysis -->
+        <div class="col-md-6 mb-4">
+            <div class="graph-card">
+                <h3 class="graph-title text-center">Salary Range Analysis</h3>
+                <p class="graph-description">Shows the distribution of job salary ranges.</p>
+                <div id="salaryChart" class="plotly-graph"></div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -127,6 +144,39 @@
                 Plotly.newPlot('experienceLevelChart', experienceLevelChartData, layout4);
             })
             .catch(error => console.error('❌ Error fetching experience level data:', error));
+
+        // Fetch location analysis data
+        fetch('/api/location_analysis')
+            .then(response => response.json())
+            .then(data => {
+                var locationChartData = [{
+                    x: data.labels,
+                    y: data.values,
+                    type: 'bar',
+                    marker: { color: 'orange' }
+                }];
+
+                var layout5 = { ...layoutSettings, xaxis: { title: 'Locations', automargin: true }, yaxis: { title: 'Count', automargin: true } };
+                Plotly.newPlot('locationChart', locationChartData, layout5);
+            })
+            .catch(error => console.error('❌ Error fetching location analysis data:', error));
+
+        // Fetch salary analysis data
+        fetch('/api/salary_analysis')
+            .then(response => response.json())
+            .then(data => {
+                var salaryChartData = [{
+                    x: data.ranges,
+                    y: data.counts,
+                    type: 'bar',
+                    marker: { color: 'green' }
+                }];
+
+                var layout6 = { ...layoutSettings, xaxis: { title: 'Salary Ranges', automargin: true }, yaxis: { title: 'Count', automargin: true } };
+                Plotly.newPlot('salaryChart', salaryChartData, layout6);
+            })
+            .catch(error => console.error('❌ Error fetching salary analysis data:', error));
     });
 </script>
+
 {% endblock %}

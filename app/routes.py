@@ -172,6 +172,74 @@ def get_experience_level_distribution():
     print("✅ Experience level data fetched successfully:", data)
     return jsonify(data)
 
+# Location Analysis API Route
+@main.route('/api/location_analysis')
+def location_analysis():
+    # Fetch all job entries from the database
+    job_data = list(db.jobs.find({}, {"location": 1, "_id": 0}))
+
+    if not job_data:
+        return jsonify({"labels": [], "values": []})
+
+    # Extract all locations into a single list
+    locations = [job['location'] for job in job_data if 'location' in job]
+
+    if len(locations) == 0:
+        return jsonify({"labels": [], "values": []})
+
+    # Count occurrences of each location
+    location_counts = pd.Series(locations).value_counts().head(15)  # Top 15 Locations
+
+    data = {
+        "labels": location_counts.index.tolist(),
+        "values": location_counts.values.tolist()
+    }
+
+    return jsonify(data)
+
+
+# Salary Range Analysis API Route
+@main.route('/api/salary_analysis')
+def salary_analysis():
+    # Fetch all job entries from the database
+    job_data = list(db.jobs.find({}, {"salary_range": 1, "_id": 0}))
+
+    if not job_data:
+        return jsonify({"ranges": [], "counts": []})
+
+    # Extract salary ranges into a single list
+    salary_ranges = [job['salary_range'] for job in job_data if 'salary_range' in job and isinstance(job['salary_range'], str)]
+
+    if len(salary_ranges) == 0:
+        return jsonify({"ranges": [], "counts": []})
+
+    # Clean salary range data (remove '$', ',', 'K', ' per year', etc.)
+    cleaned_ranges = []
+    for salary in salary_ranges:
+        try:
+            parts = salary.replace('$', '').replace(',', '').replace(' per year', '').replace('K', '000').split('-')
+            if len(parts) == 2:
+                low, high = int(parts[0].strip()), int(parts[1].strip())
+                avg_salary = (low + high) / 2
+                cleaned_ranges.append(avg_salary)
+        except ValueError:
+            continue
+
+    # Create salary bins for visualization
+    bins = [0, 50000, 100000, 150000, 200000, 250000, 300000, 350000, 400000]
+    labels = ['$0-50K', '$50K-100K', '$100K-150K', '$150K-200K', '$200K-250K', '$250K-300K', '$300K-350K', '$350K-400K']
+
+    salary_bins = pd.cut(cleaned_ranges, bins=bins, labels=labels)
+    salary_counts = salary_bins.value_counts().sort_index()
+
+    data = {
+        "ranges": salary_counts.index.tolist(),
+        "counts": salary_counts.values.tolist()
+    }
+
+    return jsonify(data)
+
+
 
 # Dashboard Route
 @main.route('/dashboard')
