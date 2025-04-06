@@ -2,7 +2,7 @@
 
 {% block title %}AWS JobLens: Keyword Analysis{% endblock %}
 
-{% block body_class %}dashboard-pg bg-light{% endblock %}
+{% block body_class %}dashboard-pg{% endblock %}
 
 {% block content %}
 <div class="container my-5">
@@ -14,14 +14,24 @@
 
     <!-- Keyword Analysis Chart -->
     <div class="col-md-12 mb-4">
-        <div class="card shadow-sm p-3">
-            <h3>Keyword Frequency Analysis</h3>
-            <p>This graph displays the most frequently mentioned keywords extracted from various AWS-related job descriptions. 
+        <div class="card shadow-sm p-4">
+            <h3 class="section-title">Keyword Frequency Analysis</h3>
+            <p class="section-description">This graph displays the most frequently mentioned keywords extracted from various AWS-related job descriptions. 
             Understanding these keywords helps identify in-demand skills and technologies, guiding users towards enhancing their profiles for better job recommendations.</p>
             <div id="keywordChart"></div>
         </div>
     </div>
+    
+    <!-- Job Title Distribution Graph -->
+    <div class="col-md-12 mb-4">
+        <div class="card shadow-sm p-4">
+            <h3 class="section-title">Job Title Distribution</h3>
+            <p class="section-description">This bar chart shows the distribution of various job titles from the dataset, helping to identify the most common job roles in AWS-related job descriptions.</p>
+            <div id="jobTitleChart"></div>
+        </div>
+    </div>
 </div>
+
 
 <!-- Plotly.js for Graphs -->
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -55,6 +65,38 @@
                 console.log('✅ Graph Rendered Successfully'); // Debug Log
             })
             .catch(error => console.error('❌ Error fetching data:', error));
+            // Fetch job title data from Flask API
+        fetch('/api/job_titles')
+            .then(response => response.json())
+            .then(data => {
+                if (data.labels.length === 0) {
+                    console.error('❌ No data returned for job title distribution.');
+                    return;
+                }
+                
+                console.log('✅ Job Title API Response Received:', data); // Debug Log
+
+                var jobTitleChartData = [{
+                    x: data.labels,
+                    y: data.values,
+                    type: 'bar',
+                    orientation: 'v',
+                    marker: { color: 'skyblue' },
+                    name: 'Job Title Frequency'
+                }];
+                
+                var layout2 = {
+                    title: 'AWS Job Title Distribution',
+                    xaxis: { title: 'Job Titles', tickangle: 45, automargin: true },
+                    yaxis: { title: 'Count' },
+                    height: 800,
+                    margin: { t: 80, b: 150 }
+                };
+
+                Plotly.newPlot('jobTitleChart', jobTitleChartData, layout2);
+                console.log('✅ Job Title Graph Rendered Successfully');
+            })
+            .catch(error => console.error('❌ Error fetching job title data:', error));
     });
 </script>
 {% endblock %}

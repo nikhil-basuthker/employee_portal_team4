@@ -98,35 +98,32 @@ def get_keywords():
 @main.route('/api/job_titles')
 def get_job_titles():
     # Fetch all job entries from the database
-    try:
-        job_data = list(db.jobs.find({}, {"job_title": 1, "_id": 0}))
-        
-        if not job_data:
-            print("❌ No job data found in the database.")
-            return jsonify({"labels": [], "values": []})  # Return empty if no data is fetched
+    job_data = list(db.jobs.find({}, {"title": 1, "_id": 0}))
 
-        # Extract job titles into a single list
-        job_titles = [job.get('job_title', '').strip().lower() for job in job_data if job.get('job_title')]
-
-        if not job_titles:
-            print("❌ No valid job titles found.")
-            return jsonify({"labels": [], "values": []})  # Return empty if no job titles found
-
-        # Count job title occurrences
-        job_title_counts = pd.Series(job_titles).value_counts().head(30)  # Top 30 job titles
-
-        # Prepare data for frontend
-        data = {
-            "labels": job_title_counts.index.tolist(),
-            "values": job_title_counts.values.tolist()
-        }
-
-        print("✅ Job title data successfully fetched.")
-        return jsonify(data)
-        
-    except Exception as e:
-        print(f"❌ Error fetching job titles: {e}")
+    if not job_data:
+        print("❌ No job title data found in the database.")
         return jsonify({"labels": [], "values": []})
+
+    # Extract all job titles into a single list
+    job_titles = [job['title'] for job in job_data if 'title' in job]
+
+    if len(job_titles) == 0:
+        print("❌ No job titles found in the dataset.")
+        return jsonify({"labels": [], "values": []})
+
+    # Count occurrences of each job title
+    job_title_counts = pd.Series(job_titles).value_counts().head(20)  # Top 20 Job Titles
+
+    # Prepare data for frontend
+    data = {
+        "labels": job_title_counts.index.tolist(),
+        "values": job_title_counts.values.tolist()
+    }
+
+    print("✅ Job title data fetched successfully:", data)  # Debug log
+    return jsonify(data)
+
+
 
 # Dashboard Route
 @main.route('/dashboard')
