@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}AWS JobLens: Keyword Analysis{% endblock %}
+
+{% block body_class %}dashboard-pg bg-light{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Page Title -->
+    <div class="mb-4 text-center">
+        <h1>AWS JobLens Dashboard</h1>
+        <p>Explore insights from AWS-related job descriptions to identify popular skills and technologies.</p>
+    </div>
+
+    <!-- Keyword Analysis Chart -->
+    <div class="col-md-12 mb-4">
+        <div class="card shadow-sm p-3">
+            <h3>Keyword Frequency Analysis</h3>
+            <p>This graph displays the most frequently mentioned keywords extracted from various AWS-related job descriptions. 
+            Understanding these keywords helps identify in-demand skills and technologies, guiding users towards enhancing their profiles for better job recommendations.</p>
+            <div id="keywordChart"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Plotly.js for Graphs -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('✅ Dashboard Page Loaded');  // Debug Log
+
+        // Fetch keyword data from Flask API
+        fetch('/api/keywords')
+            .then(response => response.json())
+            .then(data => {
+                console.log('✅ API Response Received:', data); // Debug Log
+
+                var keywordChartData = [{
+                    x: data.labels,
+                    y: data.values,
+                    type: 'bar',
+                    marker: { color: 'teal' },
+                    name: 'Keyword Frequency' // Adding legend name
+                }];
+                
+                var layout = {
+                    title: 'Top Keywords Extracted from AWS Job Descriptions',
+                    xaxis: { title: 'Keywords' },
+                    yaxis: { title: 'Frequency' },
+                    margin: { t: 80 },
+                    legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2 } // Positioning the legend below the graph
+                };
+
+                Plotly.newPlot('keywordChart', keywordChartData, layout);
+                console.log('✅ Graph Rendered Successfully'); // Debug Log
+            })
+            .catch(error => console.error('❌ Error fetching data:', error));
+    });
+</script>
+{% endblock %}
