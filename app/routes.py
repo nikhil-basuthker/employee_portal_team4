@@ -253,40 +253,27 @@ def get_unique_experience_levels():
 
 
 # Location Analysis API Route
+import re
+
 @main.route('/api/location_analysis')
 def location_analysis():
     location = request.args.get('location')
-    experience = request.args.get('experience')
-    search_keywords = request.args.get('search')
+    query = {"location": location} if location and location != "All" else {}
+    job_data = list(db.jobs.find(query, {"location": 1, "_id": 0}))
 
-    query = {}
-    if location and location != "All":
-        query["location"] = location
-    if experience and experience != "All":
-        query["experience_level"] = experience
+    state_counts = {}
 
-    job_data = list(db.jobs.find(query, {"location": 1, "required_skills": 1, "_id": 0}))
+    for job in job_data:
+        location_str = job.get("location", "")
+        match = re.search(r',\s*([A-Z]{2})$', location_str)
+        if match:
+            state = match.group(1)
+            state_counts[state] = state_counts.get(state, 0) + 1
 
-    # Parse the search keywords if any
-    if search_keywords:
-        keywords = [k.strip().lower() for k in search_keywords.split(",") if k.strip()]
-        filtered_jobs = []
-        for job in job_data:
-            skills = job.get("required_skills", [])
-            if isinstance(skills, str) and skills.startswith("[") and skills.endswith("]"):
-                skill_list = [s.strip().lower().replace("'", "") for s in skills.strip("[]").split(",")]
-                if any(keyword in skill_list for keyword in keywords):
-                    filtered_jobs.append(job)
-        job_data = filtered_jobs
-
-    locations = [job['location'] for job in job_data if 'location' in job and isinstance(job['location'], str)]
-
-    if not locations:
-        return jsonify({"labels": [], "values": []})
-
-    location_counts = pd.Series(locations).value_counts().head(15)
-    return jsonify({"labels": location_counts.index.tolist(), "values": location_counts.values.tolist()})
-
+    return jsonify({
+        "states": list(state_counts.keys()),
+        "counts": list(state_counts.values())
+    })
 
 
 # Salary Range Analysis API Route

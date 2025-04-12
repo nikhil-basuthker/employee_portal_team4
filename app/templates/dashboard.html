@@ -176,30 +176,44 @@
 
 
             // Keywords
+            // Keywords (Horizontal Bar Chart)
             fetch(`/api/keywords${query}`)
                 .then(res => res.json())
                 .then(data => {
                     Plotly.newPlot('keywordChart', [{
-                        x: data.labels, y: data.values, type: 'bar', marker: { color: 'teal' }
-                    }], { ...layoutSettings, xaxis: { title: 'Keywords', automargin: true }, yaxis: { title: 'Frequency', automargin: true } });
-                });
-
-            // Job Titles
-            fetch(`/api/job_titles${query}`)
-                .then(res => res.json())
-                .then(data => {
-                    Plotly.newPlot('jobTitleChart', [{
                         x: data.values,
                         y: data.labels,
                         type: 'bar',
                         orientation: 'h',
-                        marker: { color: 'skyblue' }
+                        marker: { color: 'teal' }
                     }], {
                         ...layoutSettings,
-                        yaxis: { title: 'Job Titles', automargin: true },
-                        xaxis: { title: 'Count', automargin: true }
+                        yaxis: { title: 'Keywords', automargin: true },
+                        xaxis: { title: 'Frequency', automargin: true }
                     });
                 });
+
+            // Job Titles
+            // Job Titles
+            fetch(`/api/job_titles${query}`)
+                .then(res => res.json())
+                .then(data => {
+                    const values = data.values;
+                    const labels = data.labels;
+
+                    // Treemap structure
+                    Plotly.newPlot('jobTitleChart', [{
+                        type: "treemap",
+                        labels: labels,
+                        parents: Array(labels.length).fill(""),
+                        values: values,
+                        textinfo: "label+value+percent entry"
+                    }], {
+                        ...layoutSettings,
+                        margin: { t: 40, b: 30, l: 0, r: 0 }
+                    });
+                });
+
 
             // Employment Type
             fetch(`/api/employment_type${query}`)
@@ -228,21 +242,33 @@
                 });
 
             // Location Chart
+            // Location Chart (Choropleth Map)
             fetch(`/api/location_analysis${query}`)
                 .then(res => res.json())
                 .then(data => {
-                    Plotly.newPlot('locationChart', [{
-                        x: data.values,
-                        y: data.labels,
-                        type: 'bar',
-                        orientation: 'h',
-                        marker: { color: 'orange' }
-                    }], {
-                        ...layoutSettings,
-                        yaxis: { title: 'Locations', automargin: true },
-                        xaxis: { title: 'Count', automargin: true }
-                    });
+                    const trace = {
+                        type: 'choropleth',
+                        locationmode: 'USA-states',
+                        locations: data.states,
+                        z: data.counts,
+                        colorscale: 'Blues',
+                        colorbar: {
+                            title: 'Job Count'
+                        }
+                    };
 
+                    const layout = {
+                        geo: {
+                            scope: 'usa',
+                            projection: { type: 'albers usa' },
+                            showlakes: true,
+                            lakecolor: 'rgb(255, 255, 255)'
+                        },
+                        margin: { t: 30, b: 20, l: 20, r: 20 },
+                        responsive: true
+                    };
+
+                    Plotly.newPlot('locationChart', [trace], layout);
                 });
 
             // Salary Chart
