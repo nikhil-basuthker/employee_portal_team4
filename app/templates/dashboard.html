@@ -11,6 +11,33 @@
         <h1>AWS JobLens Dashboard</h1>
         <p>Explore insights from AWS-related job descriptions to identify popular skills and technologies.</p>
     </div>
+<!-- Filter Card -->
+    <div class="row mb-5">
+        <div class="col-md-10 offset-md-1">
+            <div class="card p-4 shadow-sm filter-card">
+                <div class="row align-items-center mb-3">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label for="searchInput" class="form-label">Search Jobs Based on Skills</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="e.g., docker, python">
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <label for="locationFilter" class="form-label">Filter by Location</label>
+                        <select id="locationFilter" class="form-select">
+                            <option value="All">All Locations</option>
+                            <!-- JS injects options -->
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="experienceFilter" class="form-label">Filter by Experience Level</label>
+                        <select id="experienceFilter" class="form-select">
+                            <option value="All">All Experience Levels</option>
+                            <!-- JS injects options -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Graphs Row -->
     <div class="row">
@@ -72,111 +99,171 @@
 <!-- Plotly.js for Graphs -->
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         console.log('✅ Dashboard Page Loaded');
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim();
+            loadAllGraphs(locationDropdown.value, experienceDropdown.value, query);
+        });
+
 
         const layoutSettings = {
             margin: { t: 40, b: 50, l: 50, r: 50 },
             responsive: true,
             autosize: true,
-            height: 350  // Consistent height for all graphs
+            height: 350
         };
 
-        // Fetch keyword data
-        fetch('/api/keywords')
+        // Step 1: Populate location dropdown
+        fetch('/api/locations')
             .then(response => response.json())
-            .then(data => {
-                var keywordChartData = [{
-                    x: data.labels,
-                    y: data.values,
-                    type: 'bar',
-                    marker: { color: 'teal' }
-                }];
+            .then(locations => {
+                const locationDropdown = document.getElementById('locationFilter');
+                locations.forEach(loc => {
+                    const option = document.createElement('option');
+                    option.value = loc;
+                    option.textContent = loc;
+                    locationDropdown.appendChild(option);
+                });
 
-                var layout = { ...layoutSettings, xaxis: { title: 'Keywords', automargin: true }, yaxis: { title: 'Frequency', automargin: true } };
-                Plotly.newPlot('keywordChart', keywordChartData, layout);
-            })
-            .catch(error => console.error('❌ Error fetching keyword data:', error));
-
-        // Fetch job title data
-        fetch('/api/job_titles')
+                // Initial graph load
+                loadAllGraphs("All");
+            });
+        // Fetch and populate Experience Level filter
+        fetch('/api/experience_levels')
             .then(response => response.json())
-            .then(data => {
-                var jobTitleChartData = [{
-                    x: data.labels,
-                    y: data.values,
-                    type: 'bar',
-                    marker: { color: 'skyblue' }
-                }];
+            .then(levels => {
+                const experienceDropdown = document.getElementById('experienceFilter');
+                levels.forEach(level => {
+                    const option = document.createElement('option');
+                    option.value = level;
+                    option.textContent = level;
+                    experienceDropdown.appendChild(option);
+                });
+            });
 
-                var layout2 = { ...layoutSettings, xaxis: { title: 'Job Titles', tickangle: 45, automargin: true }, yaxis: { title: 'Count', automargin: true } };
-                Plotly.newPlot('jobTitleChart', jobTitleChartData, layout2);
-            })
-            .catch(error => console.error('❌ Error fetching job title data:', error));
 
-        // Fetch employment type data
-        fetch('/api/employment_type')
-            .then(response => response.json())
-            .then(data => {
-                var employmentTypeChartData = [{
-                    x: data.labels,
-                    y: data.values,
-                    type: 'bar',
-                    marker: { color: 'coral' }
-                }];
+        // Step 2: Event listener for dropdown
+        const locationDropdown = document.getElementById('locationFilter');
+        const experienceDropdown = document.getElementById('experienceFilter');
 
-                var layout3 = { ...layoutSettings, xaxis: { title: 'Employment Types', automargin: true }, yaxis: { title: 'Count', automargin: true } };
-                Plotly.newPlot('employmentTypeChart', employmentTypeChartData, layout3);
-            })
-            .catch(error => console.error('❌ Error fetching employment type data:', error));
+        locationDropdown.addEventListener('change', () => {
+            loadAllGraphs(locationDropdown.value, experienceDropdown.value);
+        });
 
-        // Fetch experience level data
-        fetch('/api/experience_level')
-            .then(response => response.json())
-            .then(data => {
-                var experienceLevelChartData = [{
-                    labels: data.labels,
-                    values: data.values,
-                    type: 'pie'
-                }];
+        experienceDropdown.addEventListener('change', () => {
+            loadAllGraphs(locationDropdown.value, experienceDropdown.value);
+        });
 
-                var layout4 = { ...layoutSettings, height: 350 };
-                Plotly.newPlot('experienceLevelChart', experienceLevelChartData, layout4);
-            })
-            .catch(error => console.error('❌ Error fetching experience level data:', error));
 
-        // Fetch location analysis data
-        fetch('/api/location_analysis')
-            .then(response => response.json())
-            .then(data => {
-                var locationChartData = [{
-                    x: data.labels,
-                    y: data.values,
-                    type: 'bar',
-                    marker: { color: 'orange' }
-                }];
+        // Step 3: Function to load all graphs based on location
+        function loadAllGraphs(location, experience) {
+            const params = new URLSearchParams();
+            
+            // ✅ Get the current search keyword from the input box
+            const searchInput = document.getElementById('searchInput').value.trim();
+                if (searchInput) {
+                    const keywords = searchInput.split(',').map(k => k.trim()).filter(Boolean);
+                    params.append("search", keywords.join(','));
+                }
 
-                var layout5 = { ...layoutSettings, xaxis: { title: 'Locations', automargin: true }, yaxis: { title: 'Count', automargin: true } };
-                Plotly.newPlot('locationChart', locationChartData, layout5);
-            })
-            .catch(error => console.error('❌ Error fetching location analysis data:', error));
 
-        // Fetch salary analysis data
-        fetch('/api/salary_analysis')
-            .then(response => response.json())
-            .then(data => {
-                var salaryChartData = [{
-                    x: data.ranges,
-                    y: data.counts,
-                    type: 'bar',
-                    marker: { color: 'green' }
-                }];
+            if (location && location !== "All") params.append("location", location);
+            if (experience && experience !== "All") params.append("experience", experience);
 
-                var layout6 = { ...layoutSettings, xaxis: { title: 'Salary Ranges', automargin: true }, yaxis: { title: 'Count', automargin: true } };
-                Plotly.newPlot('salaryChart', salaryChartData, layout6);
-            })
-            .catch(error => console.error('❌ Error fetching salary analysis data:', error));
+            const query = params.toString() ? `?${params.toString()}` : "";
+
+
+            // Keywords
+            fetch(`/api/keywords${query}`)
+                .then(res => res.json())
+                .then(data => {
+                    Plotly.newPlot('keywordChart', [{
+                        x: data.labels, y: data.values, type: 'bar', marker: { color: 'teal' }
+                    }], { ...layoutSettings, xaxis: { title: 'Keywords', automargin: true }, yaxis: { title: 'Frequency', automargin: true } });
+                });
+
+            // Job Titles
+            fetch(`/api/job_titles${query}`)
+                .then(res => res.json())
+                .then(data => {
+                    Plotly.newPlot('jobTitleChart', [{
+                        x: data.values,
+                        y: data.labels,
+                        type: 'bar',
+                        orientation: 'h',
+                        marker: { color: 'skyblue' }
+                    }], {
+                        ...layoutSettings,
+                        yaxis: { title: 'Job Titles', automargin: true },
+                        xaxis: { title: 'Count', automargin: true }
+                    });
+                });
+
+            // Employment Type
+            fetch(`/api/employment_type${query}`)
+                .then(res => res.json())
+                .then(data => {
+                    Plotly.newPlot('employmentTypeChart', [{
+                        labels: data.labels,
+                        values: data.values,
+                        type: 'pie',
+                        hole: 0.4,
+                        marker: { colors: ['#ff7f0e', '#1f77b4', '#2ca02c', '#d62728'] }
+                    }], {
+                        ...layoutSettings,
+                        showlegend: true
+                    });
+
+                });
+
+            // Experience Level
+            fetch(`/api/experience_level${query}`)
+                .then(res => res.json())
+                .then(data => {
+                    Plotly.newPlot('experienceLevelChart', [{
+                        labels: data.labels, values: data.values, type: 'pie'
+                    }], { ...layoutSettings });
+                });
+
+            // Location Chart
+            fetch(`/api/location_analysis${query}`)
+                .then(res => res.json())
+                .then(data => {
+                    Plotly.newPlot('locationChart', [{
+                        x: data.values,
+                        y: data.labels,
+                        type: 'bar',
+                        orientation: 'h',
+                        marker: { color: 'orange' }
+                    }], {
+                        ...layoutSettings,
+                        yaxis: { title: 'Locations', automargin: true },
+                        xaxis: { title: 'Count', automargin: true }
+                    });
+
+                });
+
+            // Salary Chart
+            fetch(`/api/salary_analysis${query}`)
+                .then(res => res.json())
+                .then(data => {
+                    Plotly.newPlot('salaryChart', [{
+                        x: data.ranges,
+                        y: data.counts,
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        marker: { color: 'green' }
+                    }], {
+                        ...layoutSettings,
+                        xaxis: { title: 'Salary Ranges', automargin: true },
+                        yaxis: { title: 'Count', automargin: true }
+                    });
+                });
+        }
     });
 </script>
+
 
 {% endblock %}

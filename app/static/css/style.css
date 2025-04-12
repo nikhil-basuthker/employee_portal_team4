@@ -175,3 +175,23 @@
     width: 100%;
     margin-top: 10px;
 }
+
+/* Filter Card Styling */
+.dashboard-pg .filter-card {
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.dashboard-pg .filter-card label {
+    font-weight: 500;
+    color: #2C3E50;
+}
+
+.dashboard-pg .filter-card input.form-control,
+.dashboard-pg .filter-card select.form-select {
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 10px;
+}
