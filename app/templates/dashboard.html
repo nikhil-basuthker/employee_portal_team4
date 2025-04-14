@@ -15,27 +15,48 @@
     <div class="row mb-5">
         <div class="col-md-10 offset-md-1">
             <div class="card p-4 shadow-sm filter-card">
-                <div class="row align-items-center mb-3">
-                    <div class="col-md-6 mb-3 mb-md-0">
+                <!-- First Row -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
                         <label for="searchInput" class="form-label">Search Jobs Based on Skills</label>
                         <input type="text" id="searchInput" class="form-control" placeholder="e.g., docker, python">
                     </div>
-                    <div class="col-md-3 mb-3 mb-md-0">
+                    <div class="col-md-3 mb-3">
                         <label for="locationFilter" class="form-label">Filter by Location</label>
                         <select id="locationFilter" class="form-select">
                             <option value="All">All Locations</option>
-                            <!-- JS injects options -->
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 mb-3">
                         <label for="experienceFilter" class="form-label">Filter by Experience Level</label>
                         <select id="experienceFilter" class="form-select">
                             <option value="All">All Experience Levels</option>
-                            <!-- JS injects options -->
                         </select>
                     </div>
                 </div>
-            </div>
+            
+                <!-- Second Row -->
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="remoteFilter" class="form-label">Filter by Remote Option</label>
+                        <select id="remoteFilter" class="form-select">
+                            <option value="All">All</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="platformFilter" class="form-label">Filter by Cloud Platform</label>
+                        <select id="platformFilter" class="form-select">
+                            <option value="All">All</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="functionFilter" class="form-label">Filter by Job Function</label>
+                        <select id="functionFilter" class="form-select">
+                            <option value="All">All</option>
+                        </select>
+                    </div>
+                </div>
+            </div>            
         </div>
     </div>
 
@@ -99,196 +120,239 @@
 <!-- Plotly.js for Graphs -->
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        console.log('✅ Dashboard Page Loaded');
-        const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('input', () => {
-            const query = searchInput.value.trim();
-            loadAllGraphs(locationDropdown.value, experienceDropdown.value, query);
-        });
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('✅ Dashboard Page Loaded');
 
+    const layoutSettings = {
+        margin: { t: 40, b: 50, l: 50, r: 50 },
+        responsive: true,
+        autosize: true,
+        height: 350
+    };
 
-        const layoutSettings = {
-            margin: { t: 40, b: 50, l: 50, r: 50 },
-            responsive: true,
-            autosize: true,
-            height: 350
-        };
+    const searchInput = document.getElementById('searchInput');
+    const locationDropdown = document.getElementById('locationFilter');
+    const experienceDropdown = document.getElementById('experienceFilter');
+    const remoteDropdown = document.getElementById('remoteFilter');
+    const platformDropdown = document.getElementById('platformFilter');
+    const functionDropdown = document.getElementById('functionFilter');
 
-        // Step 1: Populate location dropdown
-        fetch('/api/locations')
-            .then(response => response.json())
-            .then(locations => {
-                const locationDropdown = document.getElementById('locationFilter');
-                locations.forEach(loc => {
-                    const option = document.createElement('option');
-                    option.value = loc;
-                    option.textContent = loc;
-                    locationDropdown.appendChild(option);
-                });
+    // Filters event listeners
+    searchInput.addEventListener('input', () => loadAllGraphs());
+    locationDropdown.addEventListener('change', () => loadAllGraphs());
+    experienceDropdown.addEventListener('change', () => loadAllGraphs());
+    remoteDropdown.addEventListener('change', () => loadAllGraphs());
+    platformDropdown.addEventListener('change', () => loadAllGraphs());
+    functionDropdown.addEventListener('change', () => loadAllGraphs());
 
-                // Initial graph load
-                loadAllGraphs("All");
+    // Populate dropdowns
+    fetch('/api/locations')
+        .then(res => res.json())
+        .then(locations => {
+            locations.forEach(loc => {
+                const option = document.createElement('option');
+                option.value = loc;
+                option.textContent = loc;
+                locationDropdown.appendChild(option);
             });
-        // Fetch and populate Experience Level filter
-        fetch('/api/experience_levels')
-            .then(response => response.json())
-            .then(levels => {
-                const experienceDropdown = document.getElementById('experienceFilter');
-                levels.forEach(level => {
+            loadAllGraphs(); // Load graphs initially
+        });
+
+    fetch('/api/experience_levels')
+        .then(res => res.json())
+        .then(levels => {
+            levels.forEach(level => {
+                const option = document.createElement('option');
+                option.value = level;
+                option.textContent = level;
+                experienceDropdown.appendChild(option);
+            });
+        });
+
+    function populateDropdown(endpoint, dropdown) {
+        dropdown.innerHTML = '<option value="All">All</option>';
+        fetch(endpoint)
+            .then(res => res.json())
+            .then(options => {
+                options.forEach(opt => {
                     const option = document.createElement('option');
-                    option.value = level;
-                    option.textContent = level;
-                    experienceDropdown.appendChild(option);
+                    option.value = opt;
+                    option.textContent = opt;
+                    dropdown.appendChild(option);
                 });
             });
+    }
 
-
-        // Step 2: Event listener for dropdown
-        const locationDropdown = document.getElementById('locationFilter');
-        const experienceDropdown = document.getElementById('experienceFilter');
-
-        locationDropdown.addEventListener('change', () => {
-            loadAllGraphs(locationDropdown.value, experienceDropdown.value);
+    populateDropdown('/api/remote_options', remoteDropdown);
+    populateDropdown('/api/platforms', platformDropdown);
+    populateDropdown('/api/job_functions', functionDropdown);
+    // Remote Option
+    fetch('/api/remote_options')
+        .then(res => res.json())
+        .then(options => {
+            const dropdown = document.getElementById('remoteFilter');
+            dropdown.innerHTML = '<option value="All">All</option>'; // clear and reset default
+            new Set(options).forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                dropdown.appendChild(option);
+            });
         });
 
-        experienceDropdown.addEventListener('change', () => {
-            loadAllGraphs(locationDropdown.value, experienceDropdown.value);
+    // Cloud Platform
+    fetch('/api/platforms')
+        .then(res => res.json())
+        .then(options => {
+            const dropdown = document.getElementById('platformFilter');
+            dropdown.innerHTML = '<option value="All">All</option>';
+            new Set(options).forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                dropdown.appendChild(option);
+            });
+        });
+
+    // Job Function
+    fetch('/api/job_functions')
+        .then(res => res.json())
+        .then(options => {
+            const dropdown = document.getElementById('functionFilter');
+            dropdown.innerHTML = '<option value="All">All</option>';
+            new Set(options).forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                dropdown.appendChild(option);
+            });
         });
 
 
-        // Step 3: Function to load all graphs based on location
-        function loadAllGraphs(location, experience) {
-            const params = new URLSearchParams();
-            
-            // ✅ Get the current search keyword from the input box
-            const searchInput = document.getElementById('searchInput').value.trim();
-                if (searchInput) {
-                    const keywords = searchInput.split(',').map(k => k.trim()).filter(Boolean);
-                    params.append("search", keywords.join(','));
-                }
+    // Load Graphs
+    function loadAllGraphs() {
+        const params = new URLSearchParams();
 
-
-            if (location && location !== "All") params.append("location", location);
-            if (experience && experience !== "All") params.append("experience", experience);
-
-            const query = params.toString() ? `?${params.toString()}` : "";
-
-
-            // Keywords
-            // Keywords (Horizontal Bar Chart)
-            fetch(`/api/keywords${query}`)
-                .then(res => res.json())
-                .then(data => {
-                    Plotly.newPlot('keywordChart', [{
-                        x: data.values,
-                        y: data.labels,
-                        type: 'bar',
-                        orientation: 'h',
-                        marker: { color: 'teal' }
-                    }], {
-                        ...layoutSettings,
-                        yaxis: { title: 'Keywords', automargin: true },
-                        xaxis: { title: 'Frequency', automargin: true }
-                    });
-                });
-
-            // Job Titles
-            // Job Titles
-            fetch(`/api/job_titles${query}`)
-                .then(res => res.json())
-                .then(data => {
-                    const values = data.values;
-                    const labels = data.labels;
-
-                    // Treemap structure
-                    Plotly.newPlot('jobTitleChart', [{
-                        type: "treemap",
-                        labels: labels,
-                        parents: Array(labels.length).fill(""),
-                        values: values,
-                        textinfo: "label+value+percent entry"
-                    }], {
-                        ...layoutSettings,
-                        margin: { t: 40, b: 30, l: 0, r: 0 }
-                    });
-                });
-
-
-            // Employment Type
-            fetch(`/api/employment_type${query}`)
-                .then(res => res.json())
-                .then(data => {
-                    Plotly.newPlot('employmentTypeChart', [{
-                        labels: data.labels,
-                        values: data.values,
-                        type: 'pie',
-                        hole: 0.4,
-                        marker: { colors: ['#ff7f0e', '#1f77b4', '#2ca02c', '#d62728'] }
-                    }], {
-                        ...layoutSettings,
-                        showlegend: true
-                    });
-
-                });
-
-            // Experience Level
-            fetch(`/api/experience_level${query}`)
-                .then(res => res.json())
-                .then(data => {
-                    Plotly.newPlot('experienceLevelChart', [{
-                        labels: data.labels, values: data.values, type: 'pie'
-                    }], { ...layoutSettings });
-                });
-
-            // Location Chart
-            // Location Chart (Choropleth Map)
-            fetch(`/api/location_analysis${query}`)
-                .then(res => res.json())
-                .then(data => {
-                    const trace = {
-                        type: 'choropleth',
-                        locationmode: 'USA-states',
-                        locations: data.states,
-                        z: data.counts,
-                        colorscale: 'Blues',
-                        colorbar: {
-                            title: 'Job Count'
-                        }
-                    };
-
-                    const layout = {
-                        geo: {
-                            scope: 'usa',
-                            projection: { type: 'albers usa' },
-                            showlakes: true,
-                            lakecolor: 'rgb(255, 255, 255)'
-                        },
-                        margin: { t: 30, b: 20, l: 20, r: 20 },
-                        responsive: true
-                    };
-
-                    Plotly.newPlot('locationChart', [trace], layout);
-                });
-
-            // Salary Chart
-            fetch(`/api/salary_analysis${query}`)
-                .then(res => res.json())
-                .then(data => {
-                    Plotly.newPlot('salaryChart', [{
-                        x: data.ranges,
-                        y: data.counts,
-                        type: 'scatter',
-                        mode: 'lines+markers',
-                        marker: { color: 'green' }
-                    }], {
-                        ...layoutSettings,
-                        xaxis: { title: 'Salary Ranges', automargin: true },
-                        yaxis: { title: 'Count', automargin: true }
-                    });
-                });
+        const searchQuery = searchInput.value.trim();
+        if (searchQuery) {
+            const keywords = searchQuery.split(',').map(k => k.trim()).filter(Boolean);
+            params.append("search", keywords.join(','));
         }
-    });
+
+        const location = locationDropdown.value;
+        const experience = experienceDropdown.value;
+        const remote = remoteDropdown.value;
+        const platform = platformDropdown.value;
+        const jobFunction = functionDropdown.value;
+
+        if (location && location !== "All") params.append("location", location);
+        if (experience && experience !== "All") params.append("experience", experience);
+        if (remote && remote !== "All") params.append("remote", remote);
+        if (platform && platform !== "All") params.append("platform", platform);
+        if (jobFunction && jobFunction !== "All") params.append("job_function", jobFunction);
+
+        const query = params.toString() ? `?${params.toString()}` : "";
+
+        // ✅ Your existing fetch and Plotly code (unchanged below)
+
+        fetch(`/api/keywords${query}`)
+            .then(res => res.json())
+            .then(data => {
+                Plotly.newPlot('keywordChart', [{
+                    x: data.values,
+                    y: data.labels,
+                    type: 'bar',
+                    orientation: 'h',
+                    marker: { color: 'teal' }
+                }], {
+                    ...layoutSettings,
+                    yaxis: { title: 'Keywords', automargin: true },
+                    xaxis: { title: 'Frequency', automargin: true }
+                });
+            });
+
+        fetch(`/api/job_titles${query}`)
+            .then(res => res.json())
+            .then(data => {
+                Plotly.newPlot('jobTitleChart', [{
+                    type: "treemap",
+                    labels: data.labels,
+                    parents: Array(data.labels.length).fill(""),
+                    values: data.values,
+                    textinfo: "label+value+percent entry"
+                }], {
+                    ...layoutSettings,
+                    margin: { t: 40, b: 30, l: 0, r: 0 }
+                });
+            });
+
+        fetch(`/api/employment_type${query}`)
+            .then(res => res.json())
+            .then(data => {
+                Plotly.newPlot('employmentTypeChart', [{
+                    labels: data.labels,
+                    values: data.values,
+                    type: 'pie',
+                    hole: 0.4,
+                    marker: { colors: ['#ff7f0e', '#1f77b4', '#2ca02c', '#d62728'] }
+                }], {
+                    ...layoutSettings,
+                    showlegend: true
+                });
+            });
+
+        fetch(`/api/experience_level${query}`)
+            .then(res => res.json())
+            .then(data => {
+                Plotly.newPlot('experienceLevelChart', [{
+                    labels: data.labels, values: data.values, type: 'pie'
+                }], { ...layoutSettings });
+            });
+
+        fetch(`/api/location_analysis${query}`)
+            .then(res => res.json())
+            .then(data => {
+                const trace = {
+                    type: 'choropleth',
+                    locationmode: 'USA-states',
+                    locations: data.states,
+                    z: data.counts,
+                    colorscale: 'Reds',
+                    colorbar: { title: 'Job Count' }
+                };
+
+                const layout = {
+                    geo: {
+                        scope: 'usa',
+                        projection: { type: 'albers usa' },
+                        showlakes: true,
+                        lakecolor: 'rgb(255, 255, 255)'
+                    },
+                    margin: { t: 30, b: 20, l: 20, r: 20 },
+                    responsive: true
+                };
+
+                Plotly.newPlot('locationChart', [trace], layout);
+            });
+
+        fetch(`/api/salary_analysis${query}`)
+            .then(res => res.json())
+            .then(data => {
+                Plotly.newPlot('salaryChart', [{
+                    x: data.ranges,
+                    y: data.counts,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    marker: { color: 'green' }
+                }], {
+                    ...layoutSettings,
+                    xaxis: { title: 'Salary Ranges', automargin: true },
+                    yaxis: { title: 'Count', automargin: true }
+                });
+            });
+    }
+});
+
 </script>
 
 

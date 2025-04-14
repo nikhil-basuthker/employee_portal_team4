@@ -185,13 +185,16 @@
 }
 
 .dashboard-pg .filter-card label {
-    font-weight: 500;
-    color: #2C3E50;
+    color: black;
+    font-weight: 300;
+    font-size: 1.1rem;
 }
 
 .dashboard-pg .filter-card input.form-control,
 .dashboard-pg .filter-card select.form-select {
     border-radius: 8px;
-    font-size: 1rem;
+    color: black;
+    font-weight: 300;
+    font-size: 1.0rem;
     padding: 10px;
 }

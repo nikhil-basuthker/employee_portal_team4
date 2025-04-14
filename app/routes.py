@@ -10,6 +10,28 @@ main = Blueprint('main', __name__)
 def home():
     return render_template('home.html')
 
+def build_filter_query():
+    query = {}
+    location = request.args.get("location")
+    experience = request.args.get("experience")
+    remote = request.args.get("remote")
+    platform = request.args.get("platform")
+    job_function = request.args.get("job_function")
+
+    if location and location != "All":
+        query["location"] = location
+    if experience and experience != "All":
+        query["experience_level"] = experience
+    if remote and remote != "All":
+        query["remote_option"] = remote
+    if platform and platform != "All":
+        query["cloud_platform"] = platform
+    if job_function and job_function != "All":
+        query["job_function"] = job_function
+
+    return query
+
+
 
 # Register Route
 @main.route('/register', methods=['GET', 'POST'])
@@ -72,16 +94,10 @@ def login():
 
 @main.route('/api/keywords')
 def get_keywords():
-    location = request.args.get('location')
-    experience = request.args.get('experience')
     search_query = request.args.get('search')
 
-    # Build dynamic MongoDB query
-    query = {}
-    if location and location != "All":
-        query["location"] = location
-    if experience and experience != "All":
-        query["experience_level"] = experience
+    # 🔄 Use the reusable filter builder
+    query = build_filter_query()
 
     # Parse search terms (comma-separated)
     search_terms = []
@@ -101,7 +117,6 @@ def get_keywords():
             if not search_terms:
                 skills_list.extend(skills)
             else:
-                # Only include matched search terms
                 matched = [s for s in skills if s in search_terms]
                 if matched:
                     skills_list.extend(matched)
@@ -121,15 +136,10 @@ def get_keywords():
 
 @main.route('/api/job_titles')
 def get_job_titles():
-    location = request.args.get('location')
-    experience = request.args.get('experience')
     search = request.args.get('search')
 
-    query = {}
-    if location and location != "All":
-        query["location"] = location
-    if experience and experience != "All":
-        query["experience_level"] = experience
+    # 🔄 Use centralized filtering logic
+    query = build_filter_query()
 
     job_data = list(db.jobs.find(query, {"job_title": 1, "required_skills": 1, "_id": 0}))
 
@@ -137,16 +147,14 @@ def get_job_titles():
     if search:
         keywords = [kw.strip().lower() for kw in search.split(",") if kw.strip()]
         for job in job_data:
-            skills = []
             raw_skills = job.get("required_skills", [])
             if isinstance(raw_skills, str) and raw_skills.startswith("[") and raw_skills.endswith("]"):
                 cleaned = raw_skills.strip("[]").replace("'", "")
-                skills = [s.strip().lower() for s in cleaned.split(",") if s.strip()]
-            
-            if any(kw in skills for kw in keywords):
-                job_title = job.get('job_title')
-                if job_title:
-                    job_titles.append(job_title)
+                skill_list = [s.strip().lower() for s in cleaned.split(",") if s.strip()]
+                if any(kw in skill_list for kw in keywords):
+                    job_title = job.get('job_title')
+                    if job_title:
+                        job_titles.append(job_title)
     else:
         job_titles = [job['job_title'] for job in job_data if 'job_title' in job and isinstance(job['job_title'], str)]
 
@@ -160,20 +168,16 @@ def get_job_titles():
         "values": job_title_counts.values.tolist()
     })
 
+
 from collections import Counter
 
 # Employment Type Distribution API
 @main.route('/api/employment_type')
 def get_employment_type_distribution():
-    location = request.args.get('location')
-    experience = request.args.get('experience')
     search_keywords = request.args.get('search')
 
-    query = {}
-    if location and location != "All":
-        query["location"] = location
-    if experience and experience != "All":
-        query["experience_level"] = experience
+    # ✅ Use centralized filtering logic
+    query = build_filter_query()
 
     job_data = list(db.jobs.find(query, {"employment_type": 1, "required_skills": 1, "_id": 0}))
 
@@ -200,17 +204,14 @@ def get_employment_type_distribution():
         "values": employment_type_counts.values.tolist()
     })
 
+
+
 @main.route('/api/experience_level')
 def get_experience_level_distribution():
-    location = request.args.get('location')
-    experience = request.args.get('experience')
     search_keywords = request.args.get('search')
 
-    query = {}
-    if location and location != "All":
-        query["location"] = location
-    if experience and experience != "All":
-        query["experience_level"] = experience
+    # ✅ Use the centralized filtering logic
+    query = build_filter_query()
 
     job_data = list(db.jobs.find(query, {"experience_level": 1, "required_skills": 1, "_id": 0}))
 
@@ -257,8 +258,9 @@ import re
 
 @main.route('/api/location_analysis')
 def location_analysis():
-    location = request.args.get('location')
-    query = {"location": location} if location and location != "All" else {}
+    # ✅ Use centralized filter query
+    query = build_filter_query()
+
     job_data = list(db.jobs.find(query, {"location": 1, "_id": 0}))
 
     state_counts = {}
@@ -276,22 +278,18 @@ def location_analysis():
     })
 
 
+
 # Salary Range Analysis API Route
 @main.route('/api/salary_analysis')
 def salary_analysis():
-    location = request.args.get('location')
-    experience = request.args.get('experience')
     search_keywords = request.args.get('search')
 
-    query = {}
-    if location and location != "All":
-        query["location"] = location
-    if experience and experience != "All":
-        query["experience_level"] = experience
+    # ✅ Use centralized filtering logic
+    query = build_filter_query()
 
     job_data = list(db.jobs.find(query, {"salary_avg": 1, "required_skills": 1, "_id": 0}))
 
-    # 🔍 Filter by keywords (multi-search support)
+    # 🔍 Filter by keywords
     if search_keywords:
         keywords = [k.strip().lower() for k in search_keywords.split(",") if k.strip()]
         filtered_jobs = []
@@ -303,7 +301,7 @@ def salary_analysis():
                     filtered_jobs.append(job)
         job_data = filtered_jobs
 
-    # 🧮 Clean salary data
+    # 🧮 Extract salary values
     salary_averages = []
     for job in job_data:
         raw_salary = job.get('salary_avg')
@@ -319,7 +317,7 @@ def salary_analysis():
     if not salary_averages:
         return jsonify({"ranges": [], "counts": []})
 
-    # 💰 Salary bins
+    # 💰 Define salary bins
     bins = [0, 50000, 100000, 150000, 200000, 250000, 300000, 350000, 400000]
     labels = ['$0-50K', '$50K-100K', '$100K-150K', '$150K-200K',
               '$200K-250K', '$250K-300K', '$300K-350K', '$350K-400K']
@@ -357,3 +355,22 @@ def get_unique_locations():
     
     return jsonify(locations)
 
+@main.route('/api/remote_options')
+def get_unique_remote_options():
+    options = db.jobs.distinct("remote_option")
+    cleaned = sorted([opt for opt in options if isinstance(opt, str) and opt.strip()])
+    return jsonify(cleaned)
+
+
+@main.route('/api/platforms')
+def get_unique_platforms():
+    options = db.jobs.distinct("cloud_platform")
+    cleaned = sorted([opt for opt in options if isinstance(opt, str) and opt.strip()])
+    return jsonify(cleaned)
+
+
+@main.route('/api/job_functions')
+def get_unique_job_functions():
+    options = db.jobs.distinct("job_function")
+    cleaned = sorted([opt for opt in options if isinstance(opt, str) and opt.strip()])
+    return jsonify(cleaned)
