@@ -1,70 +1,109 @@
 {% extends "base.html" %}
 
-{% block title %}AWS JobLens: AWS Job Trends & Insights{% endblock %}
-
-{% block body_class %}reigster-page bg-light {% endblock %}
+{% block title %}Cloud JobLens: Cloud Job Analytics Portal{% endblock %}
+{% block body_class %}home-page bg-light{% endblock %}
 
 {% block content %}
-<div class="banner-container">
-    <img id="banner" src="{{ url_for('static', filename='images/background.png') }}" alt="Banner Image">
-    <div class="banner-text">
-        <h1 class="display-4">AWS JobLens</h1>
-        <p class="lead">Explore AWS Job Trends, Skills, and Salary Insights</p>
-    </div>
-    <div class="scroll-down">
-        <a href="#how-it-works">
-            <i class="fas fa-angle-down"></i>
-        </a>
-    </div>
-</div>
 
-<div class="bg-light py-3">
-    <div class="mission-section">
-        <div class="container">
-            <h2 class="text-center">Our Mission</h2>
-            <p>This AWS JobLens Platform is designed to help students and professionals understand the AWS job landscape through data-driven insights. Our mission is to provide a centralized, intelligent dashboard for job trends, in-demand skills, and career recommendations based on real-time market data.</p>
-            <p>Please contact us for feedback or suggestions at <a href="mailto:team@aws-portal.edu">team@aws-portal.edu</a>.</p>
-            <p>If you encounter any issues, use our <a href="#">Bug Report</a> page to let us know.</p>
-        </div>
-    </div>
-</div>
+<!-- Hero Section -->
+<header class="text-white text-center py-5" style="background: linear-gradient(to right, #1E3C72, #2A5298);">
+  <div class="container">
+    <h1 class="display-4 fw-bold">Cloud JobLens</h1>
+    <p class="lead">Explore Real-Time Analytics on Cloud Jobs, Salaries, and In-Demand Skills</p>
+    <a href="#platforms" class="btn btn-outline-light btn-lg mt-3">Start Exploring</a>
+  </div>
+</header>
 
-<div id="how-it-works" class="container how-it-works-section my-5">
-    <h2 class="text-center">How It Works</h2>
-    <div class="row justify-content-center">
-        <div class="col-md-3 d-flex">
-            <div class="card p-3 flex-fill">
-                <div class="card-body text-center">
-                    <div class="icon mb-3">
-                        <i class="bi bi-door-open" style="font-size: 60px;"></i>
-                    </div>
-                    <h3>Login</h3>
-                    <p class="text-left">Sign up as a new user, or log in to access job trend dashboards and insights tailored to AWS careers.</p>
-                </div>
-            </div>
+<!-- Mission -->
+<section class="py-5 bg-white text-center">
+  <div class="container">
+    <h2 class="mb-3">Our Mission</h2>
+    <p class="lead">
+      Cloud JobLens helps professionals, students, and career changers gain clarity on cloud job markets across AWS, Azure, and Google Cloud Platform (GCP).
+      We use data-driven insights to empower your next cloud career move.
+    </p>
+    <p>Contact us at <a href="mailto:team@cloudlens.io">team@cloudlens.io</a> or <a href="#">report issues</a>.</p>
+  </div>
+</section>
+
+<!-- Cloud Platforms Overview -->
+<section id="platforms" class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center mb-5">Platform Insights by Cloud Provider</h2>
+    <div class="row g-4 justify-content-center text-center">
+
+      <!-- AWS -->
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-4">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" alt="AWS Logo" class="mx-auto mb-3" style="width: 60px;">
+          <h5 class="fw-bold">AWS</h5>
+          <p>Explore trends in AWS job roles like DevOps Engineer, Solutions Architect, and Cloud Developer with salary and skills analysis.</p>
         </div>
-        <div class="col-md-3 d-flex">
-            <div class="card p-3 flex-fill">
-                <div class="card-body text-center">
-                    <div class="icon mb-3">
-                        <i class="fas fa-chart-line fa-3x"></i>
-                    </div>
-                    <h3>Analyze</h3>
-                    <p class="text-left">View job market insights, skill gaps, and salary predictions powered by predictive analytics and real-time data.</p>
-                </div>
-            </div>
+      </div>
+
+      <!-- Azure -->
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-4">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a8/Microsoft_Azure_Logo.svg" alt="Azure Logo" class="mx-auto mb-3" style="width: 60px;">
+          <h5 class="fw-bold">Azure</h5>
+          <p>Analyze Azure job opportunities, required certifications, and top-paying skills in roles like Cloud Engineer and Azure Security Analyst.</p>
         </div>
-        <div class="col-md-3 d-flex">
-            <div class="card p-3 flex-fill">
-                <div class="card-body text-center">
-                    <div class="icon mb-3">
-                        <img src="{{ url_for('static', filename='images/resultslogo.png') }}" alt="Get Results" class="img-fluid">
-                    </div>
-                    <h3>Get Results</h3>
-                    <p class="text-left">Download reports or get redirected to job listings that match your AWS skill profile and preferences.</p>
-                </div>
-            </div>
+      </div>
+
+      <!-- GCP -->
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-4">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Cloud_logo.svg" alt="GCP Logo" class="mx-auto mb-3" style="width: 60px;">
+          <h5 class="fw-bold">GCP</h5>
+          <p>Gain insights into Google Cloud roles including Data Engineer, MLOps Engineer, and Cloud Developer with real-time demand analytics.</p>
         </div>
+      </div>
+
     </div>
-</div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-5 bg-white" id="how-it-works">
+  <div class="container">
+    <h2 class="text-center mb-5">How It Works</h2>
+    <div class="row text-center g-4">
+
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm p-4 h-100">
+          <i class="fas fa-user-lock fa-3x text-primary mb-3"></i>
+          <h5 class="fw-bold">Login</h5>
+          <p>Sign up or log in to access cloud job insights customized to your skill profile and preferences.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm p-4 h-100">
+          <i class="fas fa-chart-bar fa-3x text-success mb-3"></i>
+          <h5 class="fw-bold">Analyze</h5>
+          <p>View dashboards with skill demand trends, salary heatmaps, and role comparisons powered by real-time data.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm p-4 h-100">
+          <i class="fas fa-briefcase fa-3x text-warning mb-3"></i>
+          <h5 class="fw-bold">Get Results</h5>
+          <p>Download personalized job reports or get redirected to matching cloud job listings instantly.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 text-white text-center" style="background-color: #1E3C72;">
+  <div class="container">
+    <h2 class="mb-3">Start Your Cloud Career Journey</h2>
+    <p class="mb-4">Join now to unlock data-driven insights that guide you to the perfect cloud role.</p>
+    <a href="/login" class="btn btn-light btn-lg">Login / Register</a>
+  </div>
+</section>
+
 {% endblock %}
