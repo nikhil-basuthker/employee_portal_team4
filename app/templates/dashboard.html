@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}AWS JobLens: Keyword Analysis{% endblock %}
+{% block title %}Cloud JobLens: Keyword Analysis{% endblock %}
 
 {% block body_class %}dashboard-pg{% endblock %}
 
@@ -8,8 +8,8 @@
 <div class="container my-5">
     <!-- Page Title -->
     <div class="mb-4 text-center">
-        <h1>AWS JobLens Dashboard</h1>
-        <p>Explore insights from AWS-related job descriptions to identify popular skills and technologies.</p>
+        <h1>Cloud JobLens Dashboard</h1>
+        <p>Explore insights from Cloud-related job descriptions to identify popular skills and technologies.</p>
     </div>
 <!-- Filter Card -->
     <div class="row mb-5">
@@ -49,12 +49,12 @@
                             <option value="All">All</option>
                         </select>
                     </div>
-                    <div class="col-md-3 mb-3">
+                    <!-- <div class="col-md-3 mb-3">
                         <label for="functionFilter" class="form-label">Filter by Job Function</label>
                         <select id="functionFilter" class="form-select">
                             <option value="All">All</option>
                         </select>
-                    </div>
+                    </div> -->
                 </div>
             </div>            
         </div>
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const experienceDropdown = document.getElementById('experienceFilter');
     const remoteDropdown = document.getElementById('remoteFilter');
     const platformDropdown = document.getElementById('platformFilter');
-    const functionDropdown = document.getElementById('functionFilter');
+
 
     // Filters event listeners
     searchInput.addEventListener('input', () => loadAllGraphs());
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
     experienceDropdown.addEventListener('change', () => loadAllGraphs());
     remoteDropdown.addEventListener('change', () => loadAllGraphs());
     platformDropdown.addEventListener('change', () => loadAllGraphs());
-    functionDropdown.addEventListener('change', () => loadAllGraphs());
+
 
     // Populate dropdowns
     fetch('/api/locations')
@@ -185,7 +185,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     populateDropdown('/api/remote_options', remoteDropdown);
     populateDropdown('/api/platforms', platformDropdown);
-    populateDropdown('/api/job_functions', functionDropdown);
     // Remote Option
     fetch('/api/remote_options')
         .then(res => res.json())
@@ -215,18 +214,18 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
     // Job Function
-    fetch('/api/job_functions')
-        .then(res => res.json())
-        .then(options => {
-            const dropdown = document.getElementById('functionFilter');
-            dropdown.innerHTML = '<option value="All">All</option>';
-            new Set(options).forEach(opt => {
-                const option = document.createElement('option');
-                option.value = opt;
-                option.textContent = opt;
-                dropdown.appendChild(option);
-            });
-        });
+    // fetch('/api/job_functions')
+    //     .then(res => res.json())
+    //     .then(options => {
+    //         const dropdown = document.getElementById('functionFilter');
+    //         dropdown.innerHTML = '<option value="All">All</option>';
+    //         new Set(options).forEach(opt => {
+    //             const option = document.createElement('option');
+    //             option.value = opt;
+    //             option.textContent = opt;
+    //             dropdown.appendChild(option);
+    //         });
+    //     });
 
 
     // Load Graphs
@@ -243,13 +242,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const experience = experienceDropdown.value;
         const remote = remoteDropdown.value;
         const platform = platformDropdown.value;
-        const jobFunction = functionDropdown.value;
+        // const jobFunction = functionDropdown.value;
 
         if (location && location !== "All") params.append("location", location);
         if (experience && experience !== "All") params.append("experience", experience);
         if (remote && remote !== "All") params.append("remote", remote);
         if (platform && platform !== "All") params.append("platform", platform);
-        if (jobFunction && jobFunction !== "All") params.append("job_function", jobFunction);
+        // if (jobFunction && jobFunction !== "All") params.append("job_function", jobFunction);
 
         const query = params.toString() ? `?${params.toString()}` : "";
 

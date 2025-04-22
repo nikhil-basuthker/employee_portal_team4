@@ -1,15 +1,15 @@
 
-# AWS JobLens
+# Cloud JobLens
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Status](https://img.shields.io/badge/status-in%20development-yellow)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 
-A Flask-powered AWS JobLens Platform focused on AWS job trends, skills, and personalized career insights.
+A Flask-powered Cloud JobLens Platform focused on cloud job trends, skills, and personalized career insights.
 
 ## Project Description
 
-AWS JobLens is a data-driven web application designed to help students and professionals explore real-time AWS job market trends. Users can upload their resumes to get tailored skill recommendations, access dashboards on in-demand AWS skills, and gain salary and job insights to make smarter career decisions.
+Cloud JobLens is a data-driven web application designed to help students and professionals explore real-time AWS job market trends. Users can upload their resumes to get tailored skill recommendations, access dashboards on in-demand AWS skills, and gain salary and job insights to make smarter career decisions.
 
 ## Table of Contents
 
