@@ -11,19 +11,18 @@
   background: url('{{ url_for('static', filename='images/background.png') }}') no-repeat center center;
   background-size: cover;
 ">
-  <div class="container d-flex justify-content-center">
-    <div style="
-      background: rgba(42, 44, 47, 0.6);
-      padding: 2rem;
-      border-radius: 10px;
-      max-width: 600px;
-      width: 100%;
-    ">
-      <h1 class="display-4 fw-bold">Cloud JobLens</h1>
-      <p class="lead">Explore Real-Time Analytics on Cloud Jobs, Salaries, and In-Demand Skills</p>
-      <a href="#platforms" class="btn btn-outline-light btn-lg mt-3">Start Exploring</a>
+  <div class="banner-container">
+    <img id="banner" src="{{ url_for('static', filename='images/background.png') }}" alt="Banner Image">
+    <div class="banner-text">
+        <h1 class="display-4">Cloud JobLens</h1>
+        <p class="lead">Explore Cloud Job Trends, Skills, and Salary Insights</p>
     </div>
-  </div>
+    <div class="scroll-down">
+        <a href="#how-it-works">
+            <i class="fas fa-angle-down"></i>
+        </a>
+    </div>
+</div>
 </header>
 
 <!-- Mission -->
