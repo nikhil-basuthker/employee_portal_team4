@@ -62,7 +62,7 @@ User Flow:
 - View extracted AWS skills
 - Analyze job/salary trends on dashboard
 
-## Features
+## Features of project
 
 - User Registration & Login (MongoDB)
 - Resume Upload and AWS Skill Extraction
