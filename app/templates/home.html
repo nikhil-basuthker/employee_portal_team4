@@ -5,13 +5,24 @@
 
 {% block content %}
 
-<!-- Hero Section -->
-<header class="text-white text-center py-5" style="background: linear-gradient(to right, #1E3C72, #2A5298);">
-  <div class="container">
-    <h1 class="display-4 fw-bold">Cloud JobLens</h1>
-    <p class="lead">Explore Real-Time Analytics on Cloud Jobs, Salaries, and In-Demand Skills</p>
-    <a href="#platforms" class="btn btn-outline-light btn-lg mt-3">Start Exploring</a>
-  </div>
+
+<!-- Hero Section with Background Image and Slim Overlay -->
+<header class="text-white text-center py-5" style="
+  background: url('{{ url_for('static', filename='images/background.png') }}') no-repeat center center;
+  background-size: cover;
+">
+  <div class="banner-container">
+    <img id="banner" src="{{ url_for('static', filename='images/background.png') }}" alt="Banner Image">
+    <div class="banner-text">
+        <h1 class="display-4">Cloud JobLens</h1>
+        <p class="lead">Explore Cloud Job Trends, Skills, and Salary Insights</p>
+    </div>
+    <div class="scroll-down">
+        <a href="#how-it-works">
+            <i class="fas fa-angle-down"></i>
+        </a>
+    </div>
+</div>
 </header>
 
 <!-- Mission -->
@@ -53,7 +64,7 @@
       <!-- GCP -->
       <div class="col-md-4">
         <div class="card h-100 border-0 shadow-sm p-4">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Cloud_logo.svg" alt="GCP Logo" class="mx-auto mb-3" style="width: 60px;">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6a9HphSN0wQxjW5wf3vJIkAiz7jHUM6mox4PjBv9SXw&s&ec=72940545" alt="GCP Logo" class="mx-auto mb-3" style="width: 60px;">
           <h5 class="fw-bold">GCP</h5>
           <p>Gain insights into Google Cloud roles including Data Engineer, MLOps Engineer, and Cloud Developer with real-time demand analytics.</p>
         </div>
