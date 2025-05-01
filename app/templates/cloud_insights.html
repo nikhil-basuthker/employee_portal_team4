@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}Cloud Platform Intelligence{% endblock %}
+{% block body_class %}dashboard-pg{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Page Header -->
+    <div class="mb-4 text-center">
+        <h1>Cloud Platform Intelligence</h1>
+        <p>Comparative insights into AWS, GCP, and Azure cloud job trends, skills, and roles.</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-md-10 offset-md-1">
+            <div class="card p-4 shadow-sm filter-card">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="experienceFilter" class="form-label">Experience Level</label>
+                        <select id="experienceFilter" class="form-select">
+                            <option value="All">All</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="ageFilter" class="form-label">Job Age</label>
+                        <select id="ageFilter" class="form-select">
+                            <option value="All">All</option>
+                            <option>🟢 Fresh Postings (Last 7 Days)</option>
+                            <option>🟡 Active Listings (8–30 Days)</option>
+                            <option>🔴 Stale Listings (Over 30 Days)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Radar Chart Card -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="graph-card">
+                <h3 class="graph-title text-center">Top Skills by Cloud Platform</h3>
+                <p class="graph-description">Radar chart comparing most common skills required across AWS, GCP, and Azure job listings.</p>
+                <div id="radarChart" class="plotly-graph"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sunburst Chart Card -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="graph-card">
+                <h3 class="graph-title text-center">Job Titles Breakdown by Cloud Platform</h3>
+                <p class="graph-description">See the most common job roles offered by AWS, GCP, and Azure listings.</p>
+                <div id="sunburstChart" class="plotly-graph"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bubble Map -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="graph-card">
+                <h3 class="graph-title text-center">Cloud Platform Job Concentration (Bubble Map)</h3>
+                <p class="graph-description">Compare job density across U.S. states using scaled and color-coded bubbles.</p>
+                <div id="bubbleMapChart" class="plotly-graph"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Violin Plot Card -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="graph-card">
+                <h3 class="graph-title text-center">Salary Distribution by Cloud Platform</h3>
+                <p class="graph-description">Visualize salary ranges and densities for AWS, GCP, and Azure roles.</p>
+                <div id="violinChart" class="plotly-graph"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    function buildInsightsQueryParams() {
+        const params = new URLSearchParams();
+        const exp = document.getElementById("experienceFilter").value;
+        const age = document.getElementById("ageFilter").value;
+
+        if (exp && exp !== "All") params.append("experience", exp);
+        if (age && age !== "All") params.append("job_age", age);
+
+        return `?${params.toString()}`;
+    }
+
+    function loadAllInsightsGraphs() {
+        fetch("/api/cloud_skills_radar" + buildInsightsQueryParams())
+            .then(res => res.json())
+            .then(data => {
+                const traces = data.map(platform => ({
+                    type: 'scatterpolar',
+                    r: platform.values,
+                    theta: platform.labels,
+                    fill: 'toself',
+                    name: platform.platform
+                }));
+
+                Plotly.newPlot("radarChart", traces, {
+                    polar: {
+                        radialaxis: { visible: true, range: [0, Math.max(...traces.flatMap(t => t.r)) + 2] }
+                    },
+                    showlegend: true,
+                    height: 440,
+                    margin: { t: 50, b: 30 }
+                });
+            });
+
+        fetch("/api/cloud_platform_titles_sunburst" + buildInsightsQueryParams())
+            .then(res => res.json())
+            .then(data => {
+                Plotly.newPlot("sunburstChart", [{
+                    type: "sunburst",
+                    labels: data.labels,
+                    parents: data.parents,
+                    values: data.values,
+                    outsidetextfont: { size: 18, color: "#444" },
+                    leaf: { opacity: 0.6 },
+                    branchvalues: "total"
+                }], {
+                    margin: { l: 0, r: 0, t: 30, b: 0 },
+                    height: 440
+                });
+            });
+
+        fetch("/api/cloud_platform_salary_violin" + buildInsightsQueryParams())
+            .then(res => res.json())
+            .then(data => {
+                const traces = Object.keys(data).map(platform => ({
+                    type: 'violin',
+                    x: Array(data[platform].length).fill(platform),
+                    y: data[platform],
+                    name: platform,
+                    box: { visible: true },
+                    line: { color: platform === 'AWS' ? 'green' : platform === 'GCP' ? 'orange' : 'blue' },
+                    meanline: { visible: true }
+                }));
+
+                Plotly.newPlot("violinChart", traces, {
+                    yaxis: {
+                        zeroline: false,
+                        title: "Salary (USD)"
+                    },
+                    margin: { t: 30 },
+                    height: 440
+                });
+            });
+
+        fetch("/api/cloud_platform_bubblemap" + buildInsightsQueryParams())
+            .then(res => res.json())
+            .then(data => {
+                const platforms = ["AWS", "GCP", "Azure"];
+                const colors = { AWS: "green", GCP: "orange", Azure: "blue" };
+
+                const traces = platforms.map(platform => {
+                    const platformData = data.filter(d => d.platform === platform);
+                    return {
+                        type: "scattergeo",
+                        locationmode: "USA-states",
+                        lat: platformData.map(d => d.lat),
+                        lon: platformData.map(d => d.lon),
+                        text: platformData.map(d => `${d.state}: ${d.count} jobs`),
+                        marker: {
+                            size: platformData.map(d => Math.sqrt(d.count) * 5),
+                            color: colors[platform],
+                            line: { width: 0.5, color: "white" },
+                            sizemode: "area"
+                        },
+                        name: platform,
+                        hoverinfo: "text"
+                    };
+                });
+
+                Plotly.newPlot("bubbleMapChart", traces, {
+                    geo: {
+                        scope: "usa",
+                        projection: { type: "albers usa" },
+                        showland: true,
+                        landcolor: "rgb(217, 217, 217)",
+                        subunitwidth: 1,
+                        countrywidth: 1,
+                        subunitcolor: "rgb(255,255,255)",
+                        countrycolor: "rgb(255,255,255)"
+                    },
+                    height: 400,
+                    margin: { t: 30, b: 0 }
+                });
+            });
+    }
+
+    document.getElementById("experienceFilter").addEventListener("change", loadAllInsightsGraphs);
+    document.getElementById("ageFilter").addEventListener("change", loadAllInsightsGraphs);
+
+    // Load experience levels initially
+    fetch('/api/experience_levels')
+        .then(res => res.json())
+        .then(levels => {
+            const dropdown = document.getElementById("experienceFilter");
+            levels.forEach(level => {
+                const option = document.createElement('option');
+                option.value = level;
+                option.textContent = level;
+                dropdown.appendChild(option);
+            });
+        });
+
+    // Initial load
+    loadAllInsightsGraphs();
+});
+</script>
+{% endblock %}
