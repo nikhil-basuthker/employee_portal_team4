@@ -49,12 +49,13 @@
                             <option value="All">All</option>
                         </select>
                     </div>
-                    <!-- <div class="col-md-3 mb-3">
-                        <label for="functionFilter" class="form-label">Filter by Job Function</label>
-                        <select id="functionFilter" class="form-select">
+                    <div class="col-md-3 mb-3">
+                        <label for="ageFilter" class="form-label">Filter by Job Age</label>
+                        <select id="ageFilter" class="form-select">
                             <option value="All">All</option>
                         </select>
-                    </div> -->
+                    </div>
+                    
                 </div>
             </div>            
         </div>
@@ -130,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
         margin: { t: 40, b: 50, l: 50, r: 50 },
         responsive: true,
         autosize: true,
-        height: 350
+        height: 400
     };
 
     const searchInput = document.getElementById('searchInput');
@@ -138,6 +139,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const experienceDropdown = document.getElementById('experienceFilter');
     const remoteDropdown = document.getElementById('remoteFilter');
     const platformDropdown = document.getElementById('platformFilter');
+    const ageDropdown = document.getElementById('ageFilter');
+
+    populateDropdown('/api/job_ages', ageDropdown);  // This will be our new API
+    ageDropdown.addEventListener('change', () => loadAllGraphs());
 
 
     // Filters event listeners
@@ -246,6 +251,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const remote = remoteDropdown.value;
         const platform = platformDropdown.value;
         // const jobFunction = functionDropdown.value;
+        
+        const jobAge = ageDropdown.value;
+        if (jobAge && jobAge !== "All") params.append("job_age", jobAge);
 
         if (location && location !== "All") params.append("location", location);
         if (experience && experience !== "All") params.append("experience", experience);

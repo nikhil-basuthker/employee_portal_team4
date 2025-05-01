@@ -3,27 +3,34 @@
 {% block title %}Cloud JobLens: Cloud Job Analytics Portal{% endblock %}
 {% block body_class %}home-page bg-light{% endblock %}
 
+{% block head %}
+  <meta name="description" content="Explore cloud job roles, salary trends, and platform demand with Cloud JobLens. Compare AWS, Azure, and GCP roles in one place.">
+{% endblock %}
+
 {% block content %}
 
-
-<!-- Hero Section with Background Image and Slim Overlay -->
-<header class="text-white text-center py-5" style="
-  background: url('{{ url_for('static', filename='images/background.png') }}') no-repeat center center;
-  background-size: cover;
-">
-  <div class="banner-container">
-    <img id="banner" src="{{ url_for('static', filename='images/background.png') }}" alt="Banner Image">
-    <div class="banner-text">
-        <h1 class="display-4">Cloud JobLens</h1>
-        <p class="lead">Explore Cloud Job Trends, Skills, and Salary Insights</p>
+<!-- Hero Section -->
+<header class="text-white text-center py-5" style="background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ url_for('static', filename='images/background.png') }}') no-repeat center center; background-size: cover;">
+  <div class="container py-5">
+    <h1 class="display-4 fw-bold">Cloud JobLens</h1>
+    <p class="lead mb-4">Explore Cloud Job Trends, Skills, and Salary Insights across AWS, Azure, and GCP</p>
+    <div>
+      <a href="/dashboard" class="btn btn-primary btn-lg me-3">🔍 Job Trends</a>
+      <a href="/cloud-insights" class="btn btn-outline-light btn-lg">☁️ Cloud Insights</a>
     </div>
-    <div class="scroll-down">
-        <a href="#how-it-works">
-            <i class="fas fa-angle-down"></i>
-        </a>
-    </div>
-</div>
+  </div>
 </header>
+
+<!-- Quick Stats -->
+<section class="py-5 bg-light text-center">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4"><h3>10,000+</h3><p>Jobs Analyzed</p></div>
+      <div class="col-md-4"><h3>3 Platforms</h3><p>AWS, GCP, Azure</p></div>
+      <div class="col-md-4"><h3>200+ Skills</h3><p>Tracked Across Roles</p></div>
+    </div>
+  </div>
+</section>
 
 <!-- Mission -->
 <section class="py-5 bg-white text-center">
@@ -37,7 +44,7 @@
   </div>
 </section>
 
-<!-- Cloud Platforms Overview -->
+<!-- Platform Insights -->
 <section id="platforms" class="py-5 bg-light">
   <div class="container">
     <h2 class="text-center mb-5">Platform Insights by Cloud Provider</h2>
@@ -46,27 +53,33 @@
       <!-- AWS -->
       <div class="col-md-4">
         <div class="card h-100 border-0 shadow-sm p-4">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" alt="AWS Logo" class="mx-auto mb-3" style="width: 60px;">
-          <h5 class="fw-bold">AWS</h5>
-          <p>Explore trends in AWS job roles like DevOps Engineer, Solutions Architect, and Cloud Developer with salary and skills analysis.</p>
+          <a href="/cloud-insights?platform=AWS" class="stretched-link text-decoration-none text-dark">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" alt="AWS Logo" class="mx-auto mb-3" style="width: 60px;">
+            <h5 class="fw-bold">AWS</h5>
+            <p>Explore trends in AWS job roles like DevOps Engineer, Solutions Architect, and Cloud Developer with salary and skills analysis.</p>
+          </a>
         </div>
       </div>
 
       <!-- Azure -->
       <div class="col-md-4">
         <div class="card h-100 border-0 shadow-sm p-4">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a8/Microsoft_Azure_Logo.svg" alt="Azure Logo" class="mx-auto mb-3" style="width: 60px;">
-          <h5 class="fw-bold">Azure</h5>
-          <p>Analyze Azure job opportunities, required certifications, and top-paying skills in roles like Cloud Engineer and Azure Security Analyst.</p>
+          <a href="/cloud-insights?platform=Azure" class="stretched-link text-decoration-none text-dark">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a8/Microsoft_Azure_Logo.svg" alt="Azure Logo" class="mx-auto mb-3" style="width: 60px;">
+            <h5 class="fw-bold">Azure</h5>
+            <p>Analyze Azure job opportunities, required certifications, and top-paying skills in roles like Cloud Engineer and Azure Security Analyst.</p>
+          </a>
         </div>
       </div>
 
       <!-- GCP -->
       <div class="col-md-4">
         <div class="card h-100 border-0 shadow-sm p-4">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6a9HphSN0wQxjW5wf3vJIkAiz7jHUM6mox4PjBv9SXw&s&ec=72940545" alt="GCP Logo" class="mx-auto mb-3" style="width: 60px;">
-          <h5 class="fw-bold">GCP</h5>
-          <p>Gain insights into Google Cloud roles including Data Engineer, MLOps Engineer, and Cloud Developer with real-time demand analytics.</p>
+          <a href="/cloud-insights?platform=GCP" class="stretched-link text-decoration-none text-dark">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6a9HphSN0wQxjW5wf3vJIkAiz7jHUM6mox4PjBv9SXw&s&ec=72940545" alt="GCP Logo" class="mx-auto mb-3" style="width: 60px;">
+            <h5 class="fw-bold">GCP</h5>
+            <p>Gain insights into Google Cloud roles including Data Engineer, MLOps Engineer, and Cloud Developer with real-time demand analytics.</p>
+          </a>
         </div>
       </div>
 
@@ -105,6 +118,17 @@
       </div>
 
     </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-5 bg-light text-center">
+  <div class="container">
+    <h2 class="mb-4">What People Are Saying</h2>
+    <blockquote class="blockquote">
+      <p>“Thanks to Cloud JobLens, I discovered that GCP Data Engineering roles pay 15% more in California than Azure equivalents.”</p>
+      <footer class="blockquote-footer">Student @ WashU</footer>
+    </blockquote>
   </div>
 </section>
 

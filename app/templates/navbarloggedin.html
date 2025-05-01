@@ -10,8 +10,15 @@
                     <a class="nav-link {% if request.path == url_for('main.home') %}active{% endif %}" href="{{ url_for('main.home') }}">HOME</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.dashboard') }}">EXPLORE JOBS</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.cloud_insights') }}">CLOUD INSIGHTS</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('main.logout') }}">LOGOUT</a>
                 </li>
+
             </ul>
         </div>
     </nav>
