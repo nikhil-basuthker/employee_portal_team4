@@ -21,7 +21,7 @@
 /* Text Over Banner */
 .banner-text {
     position: absolute;
-    top: 85%;
+    top: 80%;
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
@@ -32,7 +32,7 @@
 /* Scroll Down Icon */
 .scroll-down {
     position: absolute;
-    bottom: 20px;
+    bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 2rem;
