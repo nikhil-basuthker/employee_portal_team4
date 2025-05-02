@@ -15,7 +15,7 @@ collection.drop()
 print("✅ Existing 'jobs' collection dropped.")
 
 # Step 2: Load new dataset
-df = pd.read_csv("app/cloud_jobs_dataset_with_common_skills.csv")
+df = pd.read_csv("app/dataset/cloud_jobs_dataset_with_common_skills.csv")
 
 # Optional: Clean column names (strip whitespace, lowercase)
 df.columns = [col.strip().lower() for col in df.columns]
