@@ -59,7 +59,7 @@ pip install -r requirements.txt
 
 5. Import job data:
 ```bash
-python import_data.py
+python app/dataset/import_data.py
 ```
 
 6. Run the app:
@@ -100,6 +100,9 @@ employee_portal_team4/
 │   ├── static/
 │   │   ├── css/style.css
 │   │   └── images/
+|   |── dataset/
+│   │   ├── import_data.py
+│   │   ├── cloud_jobs_dataset_with_common_skills.csv
 │   ├── templates/
 │   │   ├── base.html
 │   │   ├── home.html
@@ -109,9 +112,7 @@ employee_portal_team4/
 │   │   ├── cloud_insights.html
 │   │   └── navbar*.html
 │   ├── __init__.py
-│   ├── routes.py
-│   └── import_data.py
-├── updated_dataset_1.csv
+│   └── routes.py
 ├── main.py
 ├── requirements.txt
 └── README.md
